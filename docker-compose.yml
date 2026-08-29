@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  web:
+    build: .
+    ports:
+      - "8080:80"
+    environment:
+      - EPRINTS_REPO_ID=myrepo
+      - EPRINTS_HOSTNAME=localhost
+      - DB_HOST=db
+      - MYSQL_ROOT_PASSWORD=eprints_root_password
+    volumes:
+      - eprints_archives:/opt/eprints3/archives
+    depends_on:
+      - db
+    restart: unless-stopped
+
+  db:
+    image: mariadb:10.6
+    environment:
+      - MYSQL_ROOT_PASSWORD=eprints_root_password
+    volumes:
+      - db_data:/var/lib/mysql
+    restart: unless-stopped
+
+volumes:
+  eprints_archives:
+  db_data:

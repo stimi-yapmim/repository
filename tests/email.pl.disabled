@@ -1,0 +1,68 @@
+#!/usr/bin/perl -w  
+
+use Test::More tests => 9;
+
+use TestLib;
+use EPrints;
+use Test::MockObject;
+use strict;
+
+
+
+
+#
+my $mock_repository;
+$mock_repository = Test::MockObject->new();
+$mock_repository->set_always( 'get_conf', sub { return 1; } );
+
+ok( EPrints::Utils::send_mail( $mock_repository, 'en','Bob Smith','cjg@ecs.soton.ac.uk','test',undef,undef),
+ 	"sending mail returned true on success" );
+
+
+$mock_repository = Test::MockObject->new();
+$mock_repository->set_true( 'log' );
+$mock_repository->set_always( 'get_conf', sub { return 0; } );
+ok( !EPrints::Utils::send_mail( $mock_repository, 'en','Bob Smith','cjg@ecs.soton.ac.uk','test subject',undef,undef),
+ 	"sending mail returned false on failure" );
+my @args = $mock_repository->call_args( 2 );
+$mock_repository->called_ok( 'log' );
+is( $args[0], $mock_repository, "log to correct repository" );
+ok( index($args[1],'Failed to send mail')!=-1, 'Failure causes warning to be logged' );
+ok( index($args[1],'Bob Smith')!=-1, 'Warning mentions name' );
+ok( index($args[1],'cjg@ecs.soton.ac.uk')!=-1, 'Warning mentions email' );
+ok( index($args[1],'test subject')!=-1, 'Warning mentions subject' );
+
+my $date = EPrints::Utils::email_date();
+ok( $date =~ m/(Mon|Tue|Wed|Thu|Fri|Sat|Sun), \d\d? (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) \d\d\d\d \d\d:\d\d:\d\d [+-]\d\d\d\d/ , 'email_date()' );
+
+
+=head1 COPYRIGHT
+
+=for COPYRIGHT BEGIN
+
+Copyright 2022 University of Southampton.
+EPrints 3.4 is supplied by EPrints Services.
+
+http://www.eprints.org/eprints-3.4/
+
+=for COPYRIGHT END
+
+=for LICENSE BEGIN
+
+This file is part of EPrints 3.4 L<http://www.eprints.org/>.
+
+EPrints 3.4 and this file are released under the terms of the
+GNU Lesser General Public License version 3 as published by
+the Free Software Foundation unless otherwise stated.
+
+EPrints 3.4 is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public
+License along with EPrints 3.4.
+If not, see L<http://www.gnu.org/licenses/>.
+
+=for LICENSE END
+

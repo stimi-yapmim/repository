@@ -1,0 +1,144 @@
+#!/usr/bin/perl -w
+
+use FindBin;
+use lib "$FindBin::Bin/../perl_lib";
+
+######################################################################
+#
+#
+######################################################################
+
+=pod
+
+=for Pod2Wiki
+
+=head1 NAME
+
+B<unit_tests> - Unit testing for EPrints
+
+=head1 SYNOPSIS
+
+B<check_xapian> I<repository_id> [B<options>] 
+
+=head1 DESCRIPTION
+
+Runs unit tests under F<tests/> against a chosen EPrints repository.
+
+=head1 ARGUMENTS
+
+=over 8
+
+=item B<repository_id> 
+
+The ID of the EPrints repository to run unit tests against.
+
+=back
+
+=head1 OPTIONS
+
+=over 8
+
+=item B<--help>
+
+Print a brief help message and exit.
+
+=item B<--force>
+
+Ignore warnings and run anyway.
+
+=item B<--man>
+
+Print the full manual page and then exit.
+
+=item B<--quiet>
+
+This option will suppress all output unless an error occurs.
+
+=item B<--verbose>
+
+Explain in detail what is going on.
+
+=item B<--version>
+
+Output version information and exit.
+
+=back   
+
+=cut
+
+use EPrints;
+
+use Sys::Hostname;
+use DBI;
+use Data::Dumper;
+use File::Path;
+
+use strict;
+use Getopt::Long;
+use Pod::Usage;
+
+my $verbose = 0;
+my $quiet = 0;
+my $help = 0;
+my $man = 0;
+my $version = 0;
+my $force = 0;
+
+my( @todo ) = @ARGV;
+
+my %todo = map { $_ => 1 } @todo;
+
+eval "use Test::Harness";
+if( $@ )
+{
+    die "Can't do unit tests without Test::Harness: $@";
+}
+
+my $base_path = $EPrints::SystemSettings::conf->{base_path};
+my $test_path = "$base_path/tests";
+
+opendir( DIR, $test_path ) or die "Unable to open unit test path $test_path: $!";
+my @test_files = grep { -f "$test_path/$_" && $_ !~ /^\./ && $_ =~ /\.pl$/ } readdir( DIR );
+closedir( DIR );
+
+@test_files = sort { $a cmp $b } @test_files;
+if( scalar(@todo) )
+{
+    @test_files = grep { $todo{$_} or $todo{substr($_,0,-3)} } @test_files;
+}
+
+exit(0) if runtests(map { "$test_path/$_" } @test_files);
+
+######################################################################
+=pod
+
+=head1 COPYRIGHT
+
+=begin COPYRIGHT
+
+Copyright 2023 University of Southampton.
+EPrints 3.4 is supplied by EPrints Services.
+
+http://www.eprints.org/eprints-3.4/
+
+=end COPYRIGHT
+
+=begin LICENSE
+
+This file is part of EPrints 3.4 L<http://www.eprints.org/>.
+
+EPrints 3.4 and this file are released under the terms of the
+GNU Lesser General Public License version 3 as published by
+the Free Software Foundation unless otherwise stated.
+
+EPrints 3.4 is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public
+License along with EPrints 3.4.
+If not, see L<http://www.gnu.org/licenses/>.
+
+=end LICENSE
+
