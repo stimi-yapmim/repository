@@ -9,7 +9,7 @@ services:
       - DB_HOST=db
       - MYSQL_ROOT_PASSWORD=eprints_root_password
     volumes:
-      - eprints_archives:/opt/eprints3/archives
+      - ./archives:/opt/eprints3/archives
     depends_on:
       - db
     restart: unless-stopped
@@ -23,5 +23,4 @@ services:
     restart: unless-stopped
 
 volumes:
-  eprints_archives:
   db_data:
