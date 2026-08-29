@@ -4,7 +4,7 @@ services:
     ports:
       - "4500:80"
     environment:
-      - EPRINTS_REPO_ID=myrepo
+      - EPRINTS_REPO_ID=repositori_stimi
       - EPRINTS_HOSTNAME=localhost
       - DB_HOST=db
       - MYSQL_ROOT_PASSWORD=eprints_root_password
