@@ -4,7 +4,7 @@ services:
   web:
     build: .
     ports:
-      - "8080:80"
+      - "4500:80"
     environment:
       - EPRINTS_REPO_ID=myrepo
       - EPRINTS_HOSTNAME=localhost

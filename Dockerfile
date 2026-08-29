@@ -56,7 +56,8 @@ COPY . /tmp/eprints-src
 WORKDIR /tmp/eprints-src
 
 # Build and install EPrints
-RUN ./configure --prefix=/opt/eprints3 --with-user=eprints --with-group=eprints \
+RUN chmod +x ./configure ./install-sh \
+    && ./configure --prefix=/opt/eprints3 --with-user=eprints --with-group=eprints \
     && make \
     && make install
 
