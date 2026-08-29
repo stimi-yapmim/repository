@@ -25,6 +25,10 @@ if [ ! -d "/opt/eprints3/archives/$EPRINTS_REPO_ID" ]; then
     
     # Generate empty system apache config just to allow Apache to start
     su - eprints -c "/opt/eprints3/bin/generate_apacheconf --system"
+    # Create a dummy config to prevent Apache from failing due to empty Include wildcard
+    mkdir -p /opt/eprints3/cfg/apache
+    touch /opt/eprints3/cfg/apache/dummy.conf
+    chown -R eprints:eprints /opt/eprints3/cfg/apache
 else
     echo "Found repository: $EPRINTS_REPO_ID"
     # Regenerate config to ensure it matches current container environment
