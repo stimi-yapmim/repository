@@ -11,6 +11,7 @@ RUN apt-get update && apt-get install -y \
     autoconf \
     apache2 \
     libapache2-mod-perl2 \
+    libcgi-pm-perl \
     libxml-libxml-perl \
     libunicode-string-perl \
     libterm-readkey-perl \
