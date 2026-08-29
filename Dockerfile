@@ -7,6 +7,8 @@ ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && apt-get install -y \
     perl \
     libncurses5 \
+    automake \
+    autoconf \
     apache2 \
     libapache2-mod-perl2 \
     libxml-libxml-perl \
